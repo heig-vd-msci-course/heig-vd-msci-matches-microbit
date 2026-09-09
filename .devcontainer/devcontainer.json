@@ -1,0 +1,22 @@
+{
+  "name": "micro:bit MakeCode (mkc)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+
+  "postCreateCommand": "npm install -g makecode",
+
+  "forwardPorts": [7000],
+  "portsAttributes": {
+    "7000": {
+      "label": "MakeCode simulator (mkc serve)",
+      "onAutoForward": "openPreview"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode", "streetsidesoftware.code-spell-checker"]
+    }
+  },
+
+  "remoteUser": "node"
+}
