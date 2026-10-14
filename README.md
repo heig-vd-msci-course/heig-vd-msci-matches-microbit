@@ -62,6 +62,24 @@ générés localement et ignorés par git.
 > place). À valider : build de l'image, `npm install -g makecode`, et
 > `mkc init microbit` / `mkc build` / `mkc serve`.
 
+## 🌐 Simulateur en ligne (GitHub Pages)
+
+À chaque push, le workflow `.github/workflows/makecode.yml` compile le projet
+et publie un simulateur jouable dans le navigateur :
+
+<https://heig-vd-msci-course.github.io/heig-vd-msci-matches-microbit/>
+
+Le fichier `.hex` y est aussi disponible
+([`binary.hex`](https://heig-vd-msci-course.github.io/heig-vd-msci-matches-microbit/binary.hex)).
+
+Mise en place (une seule fois) : dans les réglages du dépôt sur GitHub,
+**Settings → Pages → Source : GitHub Actions**.
+
+Le site montre le **dernier push, quelle que soit la branche** (pratique pour
+tester une PR avant de la fusionner). Une branche ne peut déployer que si elle
+est autorisée dans **Settings → Environments → github-pages → Deployment
+branches and tags** (par défaut, seulement `main`).
+
 ## 📜 Licence
 
 Ce travail est sous licence
