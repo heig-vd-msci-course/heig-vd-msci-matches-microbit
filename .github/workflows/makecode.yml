@@ -1,0 +1,50 @@
+name: MakeCode Build
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g makecode
+      - run: mkc build
+
+      # Page statique du simulateur : les fichiers servis par `mkc serve`
+      # (index.html, loader.js, custom.js) + le programme compilé. Hors
+      # localhost, le loader charge le simulateur depuis le CDN MakeCode.
+      - name: Assemble simulator site
+        run: |
+          mkdir -p _site
+          node -e '
+            const fs = require("fs")
+            const path = require("path")
+            const root = require("child_process").execSync("npm root -g").toString().trim()
+            const lib = require.resolve("makecode-core/built/simloaderfiles", { paths: [path.join(root, "makecode")] })
+            for (const [name, content] of Object.entries(require(lib).simloaderFiles))
+              fs.writeFileSync(path.join("_site", name), content)
+          '
+          cp built/binary.js built/binary.hex _site/
+      - uses: actions/upload-pages-artifact@v3
+
+  # Chaque push déploie, y compris depuis une branche de PR : le site montre
+  # donc le dernier push, quelle que soit la branche. Les branches autorisées
+  # se règlent dans Settings → Environments → github-pages.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
